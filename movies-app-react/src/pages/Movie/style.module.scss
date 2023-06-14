@@ -63,6 +63,27 @@
                 line-height: 1.5rem;
                 color: #767e94;
             }
+            &__overview_loading {
+                p {
+                    width: 100%;
+                    height: 15px;
+                    border-radius: 10px;
+                    margin-top: 6px;
+                    margin-bottom: 0;
+                    &:first-child {
+                        margin-top: 0;
+                    }
+                    &:nth-child(2) {
+                        width: 95%;
+                    }
+                    &:nth-child(3) {
+                        width: 85%;
+                    }
+                    &:nth-child(4) {
+                        width: 70%;
+                    }
+                }
+            }
             &__rating {
                 margin-top: 20px;
                 width: max-content;
@@ -97,12 +118,31 @@
                     line-height: 2rem;
                     color: #c3c8d4;
                 }
+                &__date_loading {
+                    margin-top: 5px;
+                    width: 125px;
+                    height: 22px;
+                    border-radius: 10px;
+                }
+                &__runtime_loading {
+                    margin-top: 5px;
+                    width: 60px;
+                    height: 22px;
+                    border-radius: 10px;
+                }
+                &__genres_loading {
+                    margin-top: 5px;
+                    width: 100%;
+                    height: 22px;
+                    border-radius: 10px;
+                }
             }
         }
         &__more_info {
             margin-top: 30px;
         }
         &__tabs {
+            justify-content: center;
             a {
                 color: #767e94;
                 font-size: 1.4rem;
@@ -110,7 +150,7 @@
                 --tab-padding: 4rem;
                 --tab-border: 3px;
 
-                @media(max-width: 600px) {
+                @media (max-width: 600px) {
                     font-size: 1rem;
                     height: 2.5rem;
                     --tab-padding: 1rem;
@@ -118,7 +158,9 @@
             }
         }
         &__tab_body {
+            position: relative;
             margin-top: 20px;
+            min-height: 125px;
         }
     }
     .placeholder_bg {

@@ -5,9 +5,10 @@ import { Trailer } from '../../models';
 
 interface ITrailers {
   trailers: Trailer[];
+  isLoading?: boolean;
 }
 
-const Trailers: React.FC<ITrailers> = ({ trailers }) => {
+const Trailers: React.FC<ITrailers> = ({ trailers, isLoading }) => {
   const [trailer, setTrailer] = useState<Trailer | null>();
 
   const onPlayVideo = useCallback(
@@ -34,8 +35,10 @@ const Trailers: React.FC<ITrailers> = ({ trailers }) => {
             </div>
           </div>
         ))}
+        {trailers.length === 0 && !isLoading && (
+          <h4 className={styles.no_trailers}>No Trailers Found...</h4>
+        )}
       </div>
-      {}
       <dialog id='video_dialog' className='modal'>
         <form
           method='dialog'

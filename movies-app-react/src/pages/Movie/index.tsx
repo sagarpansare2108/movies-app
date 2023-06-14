@@ -1,17 +1,28 @@
+import {
+  Suspense,
+  lazy,
+  startTransition,
+  useCallback,
+  useMemo,
+  useState,
+  useTransition
+} from 'react';
 import { useMovie } from '../../hooks/useMovie';
 import { classNames } from '../../utils';
 import styles from './style.module.scss';
-import { Movie } from '../../models';
-import { Suspense, lazy, useCallback, useMemo, useState, useTransition } from 'react';
 import useDocumentTitle from '../../hooks/useDocumentTitle';
+import Loader from '../../components/Loader';
 
 const Reviews = lazy(() => import('../../components/Reviews'));
 const Trailers = lazy(() => import('../../components/Trailers'));
 
 export default function MoviePage() {
-  const { movie, isLoading, selectedTab, setSelectedTab } = useMovie();
+  const { movie, isLoading } = useMovie();
 
   useDocumentTitle(movie?.title);
+
+  const [isBannerLoading, setBannerLoading] = useState(true);
+  const [isPosterLoading, setPosterLoading] = useState(true);
 
   return (
     <div className={styles.movie}>
@@ -19,32 +30,73 @@ export default function MoviePage() {
         <div
           className={classNames(
             styles.movie__header__banner,
-            styles.placeholder_bg
+            styles.placeholder_bg,
+            (isLoading || isBannerLoading) && 'shimmer_blured'
           )}
         >
-          <img loading='lazy' src={movie?.backdrop_path} alt={movie?.title} />
+          <img
+            loading='lazy'
+            src={movie?.backdrop_path}
+            alt={movie?.title}
+            onLoad={() => {
+              startTransition(() => {
+                setTimeout(() => {
+                  setBannerLoading(false);
+                }, 500);
+              });
+            }}
+          />
         </div>
-        <div className={styles.movie__header__title}>{movie?.title}</div>
+        <div
+          className={classNames(
+            styles.movie__header__title,
+            isLoading && 'text_blur'
+          )}
+        >
+          {(isLoading && 'XXX XXXX XXX') || movie?.title}
+        </div>
       </div>
       <div className={styles.movie__content}>
         <div className={styles.movie__content__columns}>
           <div
             className={classNames(
               styles.movie__content__poster,
-              styles.placeholder_bg
+              styles.placeholder_bg,
+              (isLoading || isPosterLoading) && 'shimmer_blured'
             )}
           >
             <img
               loading='lazy'
               src={movie?.medium_poster_path}
               alt={movie?.title}
+              onLoad={() => {
+                startTransition(() => {
+                  setTimeout(() => {
+                    setPosterLoading(false);
+                  }, 500);
+                });
+              }}
             />
           </div>
           <div className={styles.movie__content__details}>
-            <p className={styles.movie__content__details__overview}>
-              {movie?.overview}
-            </p>
-            <div className={styles.movie__content__details__rating}>
+            {(!isLoading && (
+              <p className={styles.movie__content__details__overview}>
+                {movie?.overview}
+              </p>
+            )) || (
+              <div className={styles.movie__content__details__overview_loading}>
+                <p className={'shimmer_effect'}></p>
+                <p className={'shimmer_effect'}></p>
+                <p className={'shimmer_effect'}></p>
+                <p className={'shimmer_effect'}></p>
+              </div>
+            )}
+            <div
+              className={classNames(
+                styles.movie__content__details__rating,
+                isLoading && 'shimmer_blured'
+              )}
+            >
               <span className='material-symbols-outlined'>star</span>
               {movie?.vote_average.toFixed(1)}
             </div>
@@ -55,26 +107,53 @@ export default function MoviePage() {
                 </span>
                 Release date
               </p>
-              <p className={styles.movie__content__details__row__value}>
-                {movie?.release_date}
-              </p>
+              {(!isLoading && (
+                <p className={styles.movie__content__details__row__value}>
+                  {movie?.release_date}
+                </p>
+              )) || (
+                <p
+                  className={classNames(
+                    styles.movie__content__details__row__date_loading,
+                    'shimmer_effect'
+                  )}
+                ></p>
+              )}
             </div>
             <div className={styles.movie__content__details__row}>
               <p className={styles.movie__content__details__row__label}>
                 <span className='material-symbols-outlined'>schedule</span>
                 Runtime
               </p>
-              <p className={styles.movie__content__details__row__value}>
-                {movie?.runtime}
-              </p>
+              {(!isLoading && (
+                <p className={styles.movie__content__details__row__value}>
+                  {movie?.runtime}
+                </p>
+              )) || (
+                <p
+                  className={classNames(
+                    styles.movie__content__details__row__runtime_loading,
+                    'shimmer_effect'
+                  )}
+                ></p>
+              )}
             </div>
             <div className={styles.movie__content__details__row}>
               <p className={styles.movie__content__details__row__label}>
                 Genres
               </p>
-              <p className={styles.movie__content__details__row__value}>
-                {movie?.genres.map((genre) => genre.name).join(', ')}
-              </p>
+              {(!isLoading && (
+                <p className={styles.movie__content__details__row__value}>
+                  {movie?.genres.map((genre) => genre.name).join(', ')}
+                </p>
+              )) || (
+                <p
+                  className={classNames(
+                    styles.movie__content__details__row__genres_loading,
+                    'shimmer_effect'
+                  )}
+                ></p>
+              )}
             </div>
           </div>
         </div>
@@ -85,7 +164,14 @@ export default function MoviePage() {
 }
 
 const MovieMoreTabs: React.FC = () => {
-  const { selectedTab, setSelectedTab, reviews, trailers } = useMovie();
+  const {
+    selectedTab,
+    setSelectedTab,
+    reviews,
+    trailers,
+    isReviewsLoading,
+    isTrailersLoading
+  } = useMovie();
   const [isPending, startTransition] = useTransition();
 
   const tabs: Array<{ id: string; title: string }> = useMemo(
@@ -133,13 +219,17 @@ const MovieMoreTabs: React.FC = () => {
       </div>
       <div className={styles.movie__content__tab_body}>
         {selectedTab === 'reviews' && (
-          <Suspense fallback={<h1>Loading....</h1>}>
-            <Reviews reviews={reviews} />
+          <Suspense fallback={<Loader />}>
+            {(!isReviewsLoading && (
+              <Reviews reviews={reviews} isLoading={isReviewsLoading} />
+            )) || <Loader />}
           </Suspense>
         )}
         {selectedTab === 'trailers' && (
-          <Suspense fallback={<h1>Loading....</h1>}>
-            <Trailers trailers={trailers} />
+          <Suspense fallback={<Loader />}>
+            {(!isTrailersLoading && (
+              <Trailers trailers={trailers} isLoading={isTrailersLoading} />
+            )) || <Loader />}
           </Suspense>
         )}
       </div>

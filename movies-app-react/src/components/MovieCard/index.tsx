@@ -26,7 +26,7 @@ const MovieCard: React.FC<{ movie: Movie; isLoading?: boolean }> = ({
         )}
         to={`/movie/${movie.id}`}
       >
-        {!isLoading && (
+        {!isLoading && movie.small_poster_path && (
           <img
             loading='lazy'
             src={movie.small_poster_path}

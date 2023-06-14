@@ -4,9 +4,10 @@ import { Review } from '../../models';
 
 interface IReviews {
   reviews: Review[];
+  isLoading?: boolean;
 }
 
-const Reviews: React.FC<IReviews> = ({ reviews }) => {
+const Reviews: React.FC<IReviews> = ({ reviews, isLoading }) => {
   return (
     <div className={styles.reviews}>
       {reviews.map((review) => (
@@ -14,9 +15,16 @@ const Reviews: React.FC<IReviews> = ({ reviews }) => {
           key={review.id}
           className={classNames('chat chat-start', styles.reviews__review)}
         >
-          <div className={classNames('chat-image avatar', styles.reviews__review__avatar)}>
+          <div
+            className={classNames(
+              'chat-image avatar',
+              styles.reviews__review__avatar
+            )}
+          >
             <div className='w-10 rounded-full'>
-              {review.profilePic && <img loading='lazy' src={review.profilePic} />}
+              {review.profilePic && (
+                <img loading='lazy' src={review.profilePic} />
+              )}
             </div>
           </div>
           <div
@@ -37,6 +45,9 @@ const Reviews: React.FC<IReviews> = ({ reviews }) => {
           </div>
         </div>
       ))}
+      {reviews.length === 0 && !isLoading && (
+        <h4 className={styles.no_reviews}>No Reviews Found...</h4>
+      )}
     </div>
   );
 };

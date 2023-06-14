@@ -8,6 +8,7 @@ import useDocumentTitle from './hooks/useDocumentTitle';
 
 // Context Providers
 import { MoviesProvider } from './contexts/MoviesContext';
+import { MovieProvider } from './contexts/MovieContext';
 
 // Pages
 const Home = lazy(() => import('./pages/Home'));
@@ -17,7 +18,7 @@ import NotFound from './pages/NotFound';
 
 // Components
 import { FallbackRoutingError } from './components/FallbackError';
-import { MovieProvider } from './contexts/MovieContext';
+import Loader from './components/Loader';
 
 export default function Router(): JSX.Element {
   return (
@@ -30,7 +31,7 @@ export default function Router(): JSX.Element {
 const AppRoutes: React.FC = () => {
   useDocumentTitle();
   return (
-    <Suspense fallback={<h1>Loading....</h1>}>
+    <Suspense fallback={<Loader />}>
       <ErrorBoundary fallbackRender={FallbackRoutingError}>
         <Routes>
           <Route
@@ -44,7 +45,7 @@ const AppRoutes: React.FC = () => {
             <Route
               index
               element={
-                <Suspense fallback={<>Loading...</>}>
+                <Suspense fallback={<Loader />}>
                   <MoviesPage />
                 </Suspense>
               }
@@ -52,7 +53,7 @@ const AppRoutes: React.FC = () => {
             <Route
               path={ROUTES.NOW_PLAYING}
               element={
-                <Suspense fallback={<>Loading...</>}>
+                <Suspense fallback={<Loader />}>
                   <MoviesPage category={ROUTES.NOW_PLAYING} />
                 </Suspense>
               }
@@ -60,7 +61,7 @@ const AppRoutes: React.FC = () => {
             <Route
               path={ROUTES.TOP_RATED}
               element={
-                <Suspense fallback={<>Loading...</>}>
+                <Suspense fallback={<Loader />}>
                   <MoviesPage category={ROUTES.TOP_RATED} />
                 </Suspense>
               }
@@ -68,7 +69,7 @@ const AppRoutes: React.FC = () => {
             <Route
               path={ROUTES.UPCOMING}
               element={
-                <Suspense fallback={<>Loading...</>}>
+                <Suspense fallback={<Loader />}>
                   <MoviesPage category={ROUTES.UPCOMING} />
                 </Suspense>
               }
@@ -76,7 +77,7 @@ const AppRoutes: React.FC = () => {
             <Route
               path={ROUTES.MOVIE}
               element={
-                <Suspense fallback={<>Loading...</>}>
+                <Suspense fallback={<Loader />}>
                   <MovieProvider>
                     <MoviePage />
                   </MovieProvider>

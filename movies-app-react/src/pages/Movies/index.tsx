@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useState } from 'react';
+import { memo, useCallback, useEffect } from 'react';
 import styles from './style.module.scss';
 import { useMovies, useMoviesDispatch } from '../../hooks/useMovies';
 import SearchInputBar from '../../components/SearchInpurBar';
@@ -6,10 +6,8 @@ import MoviesList from '../../components/MoviesList';
 import {
   SET_CATEGORY,
   SET_CURRENT_PAGE,
-  SET_MOVIES,
   SET_QUERY
 } from '../../contexts/MoviesContext';
-import { Movie } from '../../models';
 
 export default function MoviesPage({
   category = '/popular'
@@ -63,7 +61,6 @@ export default function MoviesPage({
 }
 
 const WelcomeHeader: React.FC = memo(() => {
-  console.log('Render WelcomeHeader...');
   return (
     <div className={styles.welcome_header}>
       <h1>Welcome.</h1>

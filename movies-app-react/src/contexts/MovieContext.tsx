@@ -23,6 +23,8 @@ export interface IMovieState {
   reviews: Review[];
   trailers: Trailer[];
   error: any;
+  isReviewsLoaded: boolean;
+  isTrailersLoaded: boolean;
   isLoading: boolean;
   isReviewsLoading: boolean;
   isTrailersLoading: boolean;
@@ -33,7 +35,9 @@ export interface MovieContextType extends IMovieState {
   setSelectedTab: (tab: string) => void;
 }
 
-export const MovieContext = createContext<MovieContextType>({} as MovieContextType);
+export const MovieContext = createContext<MovieContextType>(
+  {} as MovieContextType
+);
 export const MovieDispatchContext = createContext<any>(null);
 
 type MovieAction =
@@ -57,13 +61,15 @@ const movieReducer = (state: IMovieState, action: MovieAction) => {
       return {
         ...state,
         reviews: action.reviews,
-        isLoading: false
+        isLoading: false,
+        isReviewsLoaded: true
       };
     case SET_MOVIE_TRAILERS:
       return {
         ...state,
         trailers: action.trailers,
-        isLoading: false
+        isLoading: false,
+        isTrailersLoaded: true
       };
     case SET_ERROR:
       return {
@@ -96,6 +102,8 @@ const initialState: IMovieState = {
   movie: null,
   reviews: [],
   trailers: [],
+  isReviewsLoaded: false,
+  isTrailersLoaded: false,
   isLoading: true,
   isReviewsLoading: true,
   isTrailersLoading: true,
@@ -120,12 +128,18 @@ export function MovieProvider({ children }: { children: ReactNode }): any {
 
   useEffect(() => {
     const controller = new AbortController();
-    id && selectedTab === 'reviews' && getMovieReviews({ controller });
-    id && selectedTab === 'trailers' && getMovieTrailers({ controller });
+    id &&
+      selectedTab === 'reviews' &&
+      !state.isReviewsLoaded &&
+      getMovieReviews({ controller });
+    id &&
+      selectedTab === 'trailers' &&
+      !state.isTrailersLoaded &&
+      getMovieTrailers({ controller });
     return () => {
       controller.abort();
     };
-  }, [id, selectedTab]);
+  }, [id, selectedTab, state.isReviewsLoaded, state.isTrailersLoaded]);
 
   async function getMovie({ controller }: { controller: AbortController }) {
     dispatch({ type: SET_LOADING, isLoading: true });
@@ -136,7 +150,6 @@ export function MovieProvider({ children }: { children: ReactNode }): any {
         },
         controller
       );
-      console.log(movie);
       dispatch({
         type: SET_MOVIE,
         movie: movie || null
@@ -177,7 +190,7 @@ export function MovieProvider({ children }: { children: ReactNode }): any {
   }: {
     controller: AbortController;
   }) {
-    dispatch({ type: SET_REVIES_LOADING, isLoading: true });
+    dispatch({ type: SET_TRAILERS_LOADING, isLoading: true });
     try {
       const trailers = await MoviesService.getTrailersById(
         {
@@ -192,7 +205,7 @@ export function MovieProvider({ children }: { children: ReactNode }): any {
     } catch (error: any) {
       dispatch({ type: SET_ERROR, error: error?.message || '' });
     } finally {
-      dispatch({ type: SET_REVIES_LOADING, isLoading: false });
+      dispatch({ type: SET_TRAILERS_LOADING, isLoading: false });
     }
   }
 

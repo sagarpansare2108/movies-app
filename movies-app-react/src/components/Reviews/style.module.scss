@@ -6,10 +6,12 @@
         }
         &__author {
             color: #767e94;
+            font-size: 1rem;
+            margin-bottom: 10px;
         }
         &__avatar {
             > div {
-                background-image: url('../../assets/avatar.png');
+                background-image: url("../../assets/avatar.png");
                 background-size: cover;
                 background-position: center;
                 background-repeat: no-repeat;
@@ -19,4 +21,10 @@
             overflow-wrap: break-word;
         }
     }
+}
+
+.no_reviews {
+    font-size: 1rem;
+    color: #767e94;
+    text-align: center;
 }
