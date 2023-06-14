@@ -1,0 +1,22 @@
+.reviews {
+    &__review {
+        margin-top: 20px;
+        &:first-child {
+            margin-top: 0;
+        }
+        &__author {
+            color: #767e94;
+        }
+        &__avatar {
+            > div {
+                background-image: url('../../assets/avatar.png');
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+            }
+        }
+        &__content {
+            overflow-wrap: break-word;
+        }
+    }
+}
