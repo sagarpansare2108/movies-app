@@ -1,4 +1,4 @@
-/* @refresh reload */
+// @refresh reload
 import { render } from 'solid-js/web';
 
 import './index.scss';
@@ -12,4 +12,8 @@ if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
   );
 }
 
-render(() => <App />, root!);
+const dispose = render(() => <App />, root!);
+
+if (import.meta.hot && import.meta.env.DEV) {
+  import.meta.hot.dispose(dispose);
+}

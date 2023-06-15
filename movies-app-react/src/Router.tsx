@@ -5,6 +5,7 @@ import * as ROUTES from './constants/routes';
 
 // Hooks
 import useDocumentTitle from './hooks/useDocumentTitle';
+import useScrollToTop from './hooks/useScrollToTop';
 
 // Context Providers
 import { MoviesProvider } from './contexts/MoviesContext';
@@ -20,6 +21,7 @@ import NotFound from './pages/NotFound';
 import { FallbackRoutingError } from './components/FallbackError';
 import Loader from './components/Loader';
 
+
 export default function Router(): JSX.Element {
   return (
     <BrowserRouter>
@@ -30,6 +32,7 @@ export default function Router(): JSX.Element {
 
 const AppRoutes: React.FC = () => {
   useDocumentTitle();
+  useScrollToTop();
   return (
     <Suspense fallback={<Loader />}>
       <ErrorBoundary fallbackRender={FallbackRoutingError}>

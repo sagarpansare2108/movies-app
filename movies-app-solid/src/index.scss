@@ -4,4 +4,65 @@
 
 :root {
   font-family: Poppins, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: white;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+  background-color: #121829;
+  height: 100%;
+  background-image: url("./assets/background.svg");
+  background-position: 50% -160px;
+  background-repeat: repeat-y;
+  background-size: 100%;
+
+  @media (max-width: 1440px) {
+    background-size: 1440px;
+  }
+}
+
+#root {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+}
+
+.container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 25px;
+}
+
+.shimmer_effect {
+  background: linear-gradient(
+    to right,
+    rgba(18, 24, 41, 0.98) 0%,
+    rgba(255, 255, 255, 0.8) 50%,
+    rgba(18, 24, 41, 0.98) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: -200% -200%;
+  }
+}
+
+.shimmer_blured {
+  filter: blur(10px);
+}
+
+.text_blur {
+  filter: blur(15px);
 }
