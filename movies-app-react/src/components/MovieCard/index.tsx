@@ -25,6 +25,7 @@ const MovieCard: React.FC<{ movie: Movie; isLoading?: boolean }> = ({
           isLoading && styles.movie_card__image_loading
         )}
         to={`/movie/${movie.id}`}
+        style={isLoading ? { pointerEvents: 'none' } : undefined}
       >
         {!isLoading && movie.small_poster_path && (
           <img
@@ -37,7 +38,12 @@ const MovieCard: React.FC<{ movie: Movie; isLoading?: boolean }> = ({
       </Link>
       <div className={styles.movie_card__title}>
         {(!isLoading && (
-          <Link to={`/movie/${movie.id}`}>{movie.title}</Link>
+          <Link
+            to={`/movie/${movie.id}`}
+            style={isLoading ? { pointerEvents: 'none' } : undefined}
+          >
+            {movie.title}
+          </Link>
         )) || <span className='shimmer_blured'>Dummy Movie</span>}
       </div>
     </div>

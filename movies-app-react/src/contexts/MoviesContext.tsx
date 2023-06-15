@@ -12,6 +12,7 @@ import MoviesService from '../services/MoviesService';
 export const SET_MOVIES = 'SET_MOVIES';
 export const ADD_MOVIES = 'ADD_MOVIES';
 export const SET_CATEGORY = 'SET_CATEGORY';
+export const SET_CATEGORY_LOADING = 'SET_CATEGORY_LOADING';
 export const SET_CURRENT_PAGE = 'SET_CURRENT_PAGE';
 export const SET_QUERY = 'SET_QUERY';
 export const SET_TOTAL_PAGES = 'SET_TOTAL_PAGES';
@@ -27,7 +28,7 @@ export interface MoviesContextType {
   totalPages: number;
   page: number;
   error: any;
-  isSearch: boolean
+  isSearch: boolean;
 }
 
 export const MoviesContext = createContext<MoviesContextType>(
@@ -39,6 +40,7 @@ type MoviesAction =
   | { type: typeof SET_MOVIES; movies: Movie[]; totalPages: number }
   | { type: typeof ADD_MOVIES; movies: Movie[]; totalPages: number }
   | { type: typeof SET_CATEGORY; category: string }
+  | { type: typeof SET_CATEGORY_LOADING; isLoading: boolean }
   | { type: typeof SET_CURRENT_PAGE; page: number }
   | { type: typeof SET_QUERY; query: string }
   | { type: typeof SET_TOTAL_PAGES; totalPages: number }
@@ -77,8 +79,14 @@ const moviesReducer = (state: MoviesContextType, action: MoviesAction) => {
         ...state,
         page: 1,
         query: '',
-        category: action.category,
-        isCategoryLoading: !state.isCategoryLoading && true || false,
+        category: action.category
+      };
+    case SET_CATEGORY_LOADING:
+      return {
+        ...state,
+        page: 1,
+        query: '',
+        isCategoryLoading: action.isLoading
       };
     case SET_CURRENT_PAGE:
       return {
@@ -115,7 +123,7 @@ const moviesReducer = (state: MoviesContextType, action: MoviesAction) => {
 
 const initialState: MoviesContextType = {
   movies: [],
-  category: '/popular',
+  category: '',
   query: '',
   isLoading: true,
   isCategoryLoading: true,
@@ -127,9 +135,18 @@ const initialState: MoviesContextType = {
 
 export function MoviesProvider({ children }: { children: ReactNode }): any {
   const [state, dispatch] = useReducer(moviesReducer, initialState);
-  const query = useDebounce(state.query);
+
+  const { category, page, query } = state;
+  const debouncedQuery = useDebounce(query);
 
   useEffect(() => {
+    console.log('category ', category);
+    dispatch({ type: SET_CATEGORY_LOADING, isLoading: true });
+  }, [category]);
+
+  useEffect(() => {
+    if (!category) return;
+
     const controller = new AbortController();
 
     getMovies({ controller });
@@ -137,7 +154,7 @@ export function MoviesProvider({ children }: { children: ReactNode }): any {
     return () => {
       controller.abort();
     };
-  }, [state.page, state.category, query]);
+  }, [page, category, debouncedQuery]);
 
   async function getMovies({ controller }: { controller: AbortController }) {
     dispatch({ type: SET_LOADING, isLoading: true });
@@ -145,8 +162,8 @@ export function MoviesProvider({ children }: { children: ReactNode }): any {
       const response = await MoviesService.getMovies(
         {
           category: state.category,
-          page: state.page,
-          query: state.query
+          page: page,
+          query: query
         },
         controller
       );

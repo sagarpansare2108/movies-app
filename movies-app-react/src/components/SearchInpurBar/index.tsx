@@ -14,8 +14,6 @@ const SearchInputBar: React.FC<{
     onChange && onChange(input.value || '');
   }, [inputRef, onChange]);
 
-  console.log('Render SearchInputBar...');
-
   return (
     <div className={styles.search_input}>
       <div className={styles.search_input__icon}>
@@ -40,7 +38,6 @@ const SearchInputBar: React.FC<{
 const SearchInputBarLoading: React.FC<{
   isLoading: boolean;
 }> = memo(({ isLoading }) => {
-  console.log('Render SearchInputBarLoading...');
   return (
     <>
       {isLoading && (
