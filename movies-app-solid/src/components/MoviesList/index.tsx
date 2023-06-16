@@ -1,4 +1,4 @@
-import { Accessor, Component, For } from 'solid-js';
+import { Accessor, Component, For, Index } from 'solid-js';
 import styles from './style.module.scss';
 import { Movie } from '../../models';
 import MovieCard from '../MovieCard';
@@ -22,14 +22,14 @@ const MoviesList: Component<{
   return (
     <div class={styles.movies_list}>
       <ul>
-        <For each={movies()}>
-          {(movie) => (
+        <Index each={movies()}>
+          {(movie, index) => (
             <li>
               <MovieCard movie={movie} isLoading={isCategoryLoading} />
             </li>
           )}
-        </For>
-        {isLoading && isLoading() && (
+        </Index>
+        {/* {isLoading && isLoading() && (
           <For each={dummyMovies}>
             {(movie) => (
               <li>
@@ -37,7 +37,7 @@ const MoviesList: Component<{
               </li>
             )}
           </For>
-        )}
+        )} */}
       </ul>
     </div>
   );

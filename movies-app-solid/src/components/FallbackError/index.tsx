@@ -6,13 +6,13 @@ export function FallbackError({ error, resetErrorBoundary }: any) {
         <div class={styles.wrap} role='alert'>
             <div class={styles.container}>
                 <h1 class={styles.container__heading}>Something went wrong</h1>
-                <pre
+                <div
                     class={
                         classNames(styles.container__text_base, styles.container__text_base__red)
                     }
                 >
                     {error?.message}
-                </pre>
+                </div>
                 <div class={styles.container__try_again}>
                     <button type='button' class='btn btn-neutral' onClick={() => resetErrorBoundary()}>
                         Try again

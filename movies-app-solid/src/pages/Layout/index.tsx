@@ -3,7 +3,7 @@ import styles from './style.module.scss';
 import { PAGES } from '../../constants';
 import { Header } from '../../components/Header';
 
-export default function HomePage() {
+export default function Layout() {
   return (
     <>
       <Header pages={PAGES} />

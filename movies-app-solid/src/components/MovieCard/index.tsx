@@ -1,10 +1,10 @@
-import { Component } from 'solid-js';
+import { Accessor, Component } from 'solid-js';
 import { A } from '@solidjs/router';
 import styles from './style.module.scss';
 import { Movie } from '../../models';
 import { classNames } from '../../utils';
 
-const MovieCard: Component<{ movie: Movie; isLoading?: boolean }> = ({
+const MovieCard: Component<{ movie: Accessor<Movie>; isLoading?: boolean }> = ({
   movie,
   isLoading = false
 }) => {
@@ -17,32 +17,32 @@ const MovieCard: Component<{ movie: Movie; isLoading?: boolean }> = ({
         )}
       >
         <span class='material-symbols-outlined'>star</span>
-        {movie.vote_average.toFixed(1)}
+        {movie().vote_average.toFixed(1)}
       </div>
       <A
         class={classNames(
           styles.movie_card__image,
           isLoading && styles.movie_card__image_loading
         )}
-        href={`/movie/${movie.id}`}
+        href={`/movie/${movie().id}`}
         style={isLoading ? { 'pointer-events': 'none' } : undefined}
       >
-        {!isLoading && movie.small_poster_path && (
+        {!isLoading && movie().small_poster_path && (
           <img
             loading='lazy'
-            src={movie.small_poster_path}
-            srcSet={`${movie.small_poster_path} 1x, ${movie.medium_poster_path} 2x`}
-            alt={movie.title}
+            src={movie().small_poster_path}
+            srcSet={`${movie().small_poster_path} 1x, ${movie().medium_poster_path} 2x`}
+            alt={movie().title}
           />
         )}
       </A>
       <div class={styles.movie_card__title}>
         {(!isLoading && (
           <A
-            href={`/movie/${movie.id}`}
+            href={`/movie/${movie().id}`}
             style={isLoading ? { 'pointer-events': 'none' } : undefined}
           >
-            {movie.title}
+            {movie().title}
           </A>
         )) || <span class='shimmer_blured'>Dummy Movie</span>}
       </div>
