@@ -68,11 +68,11 @@
                     color: #7c6ef6;
                 }
             }
-        }
 
-        &__active_menu {
-            a {
-                color: #7c6ef6;
+            &--active {
+                a {
+                    color: #7c6ef6;
+                }
             }
         }
 

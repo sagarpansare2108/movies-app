@@ -9,7 +9,7 @@ interface IMoviesParams {
 }
 
 class MoviesService {
-    static async getMovies({ category = 'popular', page, query }: IMoviesParams, controller?: AbortController): Promise<Movies> {
+    static async getMovies({ category = '/popular', page, query }: IMoviesParams, controller?: AbortController): Promise<Movies> {
         try {
             const params: any = {
                 page
@@ -21,6 +21,7 @@ class MoviesService {
             controller && (config['signal'] = controller?.signal);
             const url = query ? '/search/movie' : `/movie${category}`;
             const { data } = await RestAPI.get(url, config);
+            // console.log(category, data);
             return new Movies(data);
         } catch (e) {
             throw handleErrorResponse(e);
