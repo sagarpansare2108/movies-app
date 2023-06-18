@@ -1,4 +1,4 @@
-import { Route, Router, Routes, memoryIntegration } from '@solidjs/router';
+import { Route, Router, Routes } from '@solidjs/router';
 import { Suspense, lazy } from 'solid-js';
 
 import * as ROUTES from './constants/routes';
@@ -15,6 +15,7 @@ import NotFound from './pages/NotFound';
 import Loader from './components/Loader';
 import { MoviesProvider } from './contexts/MoviesContext';
 import useDocumentTitle from './hooks/useDocumentTitle';
+import { MovieProvider } from './contexts/MovieContext';
 
 export default function AppRouter() {
     return (
@@ -32,17 +33,17 @@ function AppRoutes() {
                 path={ROUTES.HOME}
                 element={
                     <Suspense fallback={<Loader />}>
-                        <Layout />
+                        <MoviesProvider>
+                            <Layout />
+                        </MoviesProvider>
                     </Suspense>
                 }
             >
                 <Route
-                    path={ROUTES.MOVIES}
+                    path={'/:category?'}
                     element={
                         <Suspense fallback={<Loader />}>
-                            <MoviesProvider>
-                                <MoviesPage />
-                            </MoviesProvider>
+                            <MoviesPage />
                         </Suspense>
                     }
                 />
@@ -50,7 +51,9 @@ function AppRoutes() {
                     path={ROUTES.MOVIE}
                     element={
                         <Suspense fallback={<Loader />}>
-                            <MoviePage />
+                            <MovieProvider>
+                                <MoviePage />
+                            </MovieProvider>
                         </Suspense>
                     }
                 />

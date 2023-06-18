@@ -1,6 +1,6 @@
 import { useContext } from "solid-js";
-import { MoviesContext } from "../contexts/MoviesContext";
+import { MoviesContext, IMoviesContextType } from "../contexts/MoviesContext";
 
-export function useMovies(): any {
+export function useMovies(): IMoviesContextType {
     return useContext(MoviesContext);
 }

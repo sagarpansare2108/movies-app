@@ -1,5 +1,5 @@
 import { Component, For, createMemo } from 'solid-js';
-import { A, useLocation, useNavigate } from '@solidjs/router';
+import { A, useLocation } from '@solidjs/router';
 import styles from './style.module.scss';
 import { Page } from '../../models';
 import { classNames } from '../../utils';
@@ -12,7 +12,6 @@ interface IHeader {
 export const Header: Component<IHeader> = ({ pages }) => {
   const location = useLocation();
   const pathname = createMemo(() => location.pathname);
-  const navigate = useNavigate();
 
   return (
     <header class={styles.header}>
@@ -31,10 +30,7 @@ export const Header: Component<IHeader> = ({ pages }) => {
                       pathname() === page.path
                   }}
                 >
-                  <A href={page.path} onClick={(e) => {
-                    // e.preventDefault();
-                    // navigate(page.path, { resolve: false, replace: true, scroll: false });
-                  }}>{page.title}</A>
+                  <A href={page.path}>{page.title}</A>
                 </li>
               )}
             </For>

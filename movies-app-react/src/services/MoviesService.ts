@@ -34,7 +34,7 @@ class MoviesService {
                 params
             };
             controller && (config['signal'] = controller?.signal);
-            const { data } = await RestAPI.get(`/movie/${id}`, { params });
+            const { data } = await RestAPI.get(`/movie/${id}`, config);
             return new Movie(data);
         } catch (e) {
             throw handleErrorResponse(e);
@@ -50,7 +50,7 @@ class MoviesService {
                 params
             };
             controller && (config['signal'] = controller?.signal);
-            const { data } = await RestAPI.get(`/movie/${id}/reviews`, { params });
+            const { data } = await RestAPI.get(`/movie/${id}/reviews`, config);
             return data && data.results && data.results.map((item: any) => new Review(item)) || [];
         } catch (e) {
             throw handleErrorResponse(e);
@@ -66,7 +66,7 @@ class MoviesService {
                 params
             };
             controller && (config['signal'] = controller?.signal);
-            const { data } = await RestAPI.get(`/movie/${id}/videos`, { params });
+            const { data } = await RestAPI.get(`/movie/${id}/videos`, config);
             return data && data.results && data.results.map((item: any) => new Trailer(item)) || [];
         } catch (e) {
             throw handleErrorResponse(e);

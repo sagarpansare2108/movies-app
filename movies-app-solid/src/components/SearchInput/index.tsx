@@ -6,7 +6,7 @@ interface ISearchInput {
     value?: Accessor<string>;
     isLoading?: Accessor<boolean>;
     className?: string;
-    onChange?: Setter<string>;
+    onChange?: (value: string) => void;
 }
 
 export const SearchInput: Component<ISearchInput> = ({ value, isLoading, className = '', onChange }) => {

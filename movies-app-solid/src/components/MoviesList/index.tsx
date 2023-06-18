@@ -1,4 +1,4 @@
-import { Accessor, Component, For, Index } from 'solid-js';
+import { Accessor, Component, For, Index, Show } from 'solid-js';
 import styles from './style.module.scss';
 import { Movie } from '../../models';
 import MovieCard from '../MovieCard';
@@ -6,41 +6,44 @@ import MovieCard from '../MovieCard';
 const MoviesList: Component<{
   movies: Accessor<Movie[]>;
   isLoading?: Accessor<boolean>;
-  isCategoryLoading?: boolean;
-}> = ({ movies, isLoading, isCategoryLoading }) => {
-  const dummyMovies = [
-    new Movie({ id: 1 }),
-    new Movie({ id: 2 }),
-    new Movie({ id: 3 }),
-    new Movie({ id: 4 }),
-    new Movie({ id: 5 }),
-    new Movie({ id: 6 }),
-    new Movie({ id: 7 }),
-    new Movie({ id: 8 })
-  ];
+  isRouting?: Accessor<boolean>;
+  isLoadMoreLoading?: Accessor<boolean>;
+}> = ({
+  movies,
+  isLoading = () => false,
+  isRouting = () => false,
+  isLoadMoreLoading = () => false
+}) => {
+    const dummyMovies = Array(20).fill(1).map((_, i) => {
+      return new Movie({ id: i + 1, title: 'Placeholder title' });
+    });
 
-  return (
-    <div class={styles.movies_list}>
-      <ul>
-        <Index each={movies()}>
-          {(movie, index) => (
-            <li>
-              <MovieCard movie={movie} isLoading={isCategoryLoading} />
-            </li>
-          )}
-        </Index>
-        {/* {isLoading && isLoading() && (
-          <For each={dummyMovies}>
-            {(movie) => (
+    return (
+      <div class={styles.movies_list}>
+        <ul>
+          <Index each={movies()}>
+            {(movie, _) => (
               <li>
-                <MovieCard movie={movie} isLoading={true} />
+                <MovieCard
+                  movie={movie}
+                  isLoading={isLoading}
+                  isRouting={isRouting}
+                  isLoadMoreLoading={isLoadMoreLoading} />
               </li>
             )}
-          </For>
-        )} */}
-      </ul>
-    </div>
-  );
-};
+          </Index>
+          <Show when={isLoading() && !isRouting()}>
+            <For each={dummyMovies}>
+              {(movie) => (
+                <li>
+                  <MovieCard movie={() => movie} isLoading={() => true} />
+                </li>
+              )}
+            </For>
+          </Show>
+        </ul>
+      </div>
+    );
+  };
 
 export default MoviesList;
