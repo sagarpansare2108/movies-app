@@ -17,8 +17,12 @@ export const Header: Component<IHeader> = ({ pages }) => {
     <header class={styles.header}>
       <div class={classNames('container', styles.header__container)}>
         <nav class={styles.header__nav}>
-          <A href={'/'} class={styles.header__logo}>
-            <img src={logo} />
+          <A
+            href={'/'}
+            class={styles.header__logo}
+            aria-label='Home'
+          >
+            <img src={logo} alt='TMDB' />
           </A>
           <ul class={styles.header__menus}>
             <For each={pages}>
@@ -30,7 +34,9 @@ export const Header: Component<IHeader> = ({ pages }) => {
                       pathname() === page.path
                   }}
                 >
-                  <A href={page.path}>{page.title}</A>
+                  <A href={page.path} aria-label={page.title}>
+                    {page.title}
+                  </A>
                 </li>
               )}
             </For>
