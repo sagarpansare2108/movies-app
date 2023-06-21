@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import styles from './style.module.scss';
 import { Movie } from '../../models';
 import { classNames } from '../../utils';
+import LazyImage from '../LazyImage';
+import placeholderImage from '../../assets/placeholder.jpeg';
 
 const MovieCard: React.FC<{ movie: Movie; isLoading?: boolean }> = ({
   movie,
@@ -22,19 +24,16 @@ const MovieCard: React.FC<{ movie: Movie; isLoading?: boolean }> = ({
       <Link
         className={classNames(
           styles.movie_card__image,
-          isLoading && styles.movie_card__image_loading
+          isLoading && styles['movie_card__image--loading']
         )}
         to={`/movie/${movie.id}`}
         style={isLoading ? { pointerEvents: 'none' } : undefined}
       >
-        {!isLoading && movie.small_poster_path && (
-          <img
-            loading='lazy'
-            src={movie.small_poster_path}
-            srcSet={`${movie.small_poster_path} 1x, ${movie.medium_poster_path} 2x`}
-            alt={movie.title}
-          />
-        )}
+        <LazyImage
+          src={movie.small_poster_path}
+          placeholder={placeholderImage}
+          alt={movie.title}
+        />
       </Link>
       <div className={styles.movie_card__title}>
         {(!isLoading && (
