@@ -3,6 +3,7 @@ import useDocumentTitle from '../../hooks/useDocumentTitle';
 import { useMovie } from '../../hooks/useMovie';
 import styles from './style.module.scss';
 import Loader from '../../components/Loader';
+import useIntersectionObserver from '../../hooks/useIntersectionObserver';
 
 const Reviews = lazy(() => import('../../components/Reviews'));
 const Trailers = lazy(() => import('../../components/Trailers'));
@@ -159,7 +160,7 @@ const MovieMoreTabs: Component = () => {
     isTrailersLoading
   } = useMovie();
   const [isPending, startTransition] = useTransition();
-  const [isIntersecting, setIsIntersecting] = createSignal(false);
+  const { ref, setRef, isIntersecting } = useIntersectionObserver<HTMLDivElement>();
 
   const tabs: Array<{ id: string; title: string }> = [
     {
@@ -178,38 +179,19 @@ const MovieMoreTabs: Component = () => {
     });
   };
 
-  const onViewPort = (entries: IntersectionObserverEntry[]) => {
-    const [entry] = entries;
-    if (entry.isIntersecting) {
-      setIsIntersecting(entry.isIntersecting);
-    }
-  };
-
-  const observer = new IntersectionObserver(onViewPort, {
-    root: null,
-    rootMargin: '0px',
-    threshold: 1,
-  });
-
   createEffect(() => {
     isIntersecting() && (
       startTransition(() => {
         setSelectedTab('reviews');
       })
     );
-
-    onCleanup(() => {
-      observer.disconnect();
-    });
   });
 
   return (
-    <div class={styles.movie__content__more_info} ref={(el) => {
-      observer.observe(el);
-    }}>
+    <div class={styles.movie_more_tabs} ref={(el) => setRef(el)}>
       <div classList={{
         'tabs': true,
-        [styles.movie__content__tabs]: true
+        [styles.movie_more_tabs__nav]: true
       }}>
         <Index each={tabs}>
           {(tab) => (
@@ -229,7 +211,7 @@ const MovieMoreTabs: Component = () => {
           )}
         </Index>
       </div>
-      <div class={styles.movie__content__tab_body}>
+      <div class={styles.movie_more_tabs__body}>
         {selectedTab() === 'reviews' && (
           <Suspense fallback={<Loader />}>
             <Reviews reviews={reviews} isLoading={isReviewsLoading} />

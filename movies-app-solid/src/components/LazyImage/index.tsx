@@ -1,6 +1,7 @@
-import { Accessor, Component, JSX, createEffect, createSignal, on, onCleanup, onMount, startTransition } from "solid-js";
+import { Accessor, Component, JSX, createEffect, createSignal, onCleanup, startTransition } from "solid-js";
 import styles from './style.module.scss';
 import CacheService from "../../services/CacheService";
+import useIntersectionObserver from "../../hooks/useIntersectionObserver";
 
 
 interface ILazyImage extends Omit<JSX.ImgHTMLAttributes<HTMLImageElement>, 'src' | 'alt'> {
@@ -13,8 +14,7 @@ const IMAGE_CACHE = 'IMAGE_CACHE';
 
 const LazyImage: Component<ILazyImage> = ({ src, placeholder, alt, ...props }) => {
     const [isLoaded, setLoaded] = createSignal<boolean>(false);
-    const [ref, setRef] = createSignal<HTMLImageElement>();
-    const [isIntersecting, setIsIntersecting] = createSignal(false);
+    const { ref, setRef, isIntersecting } = useIntersectionObserver<HTMLImageElement>();
 
     const fetchImage = async ({ signal }: { signal: AbortSignal }) => {
         const imageElement: any = ref();
@@ -42,19 +42,6 @@ const LazyImage: Component<ILazyImage> = ({ src, placeholder, alt, ...props }) =
         } catch (_) { }
     }
 
-    const onImageInViewPort = (entries: IntersectionObserverEntry[]) => {
-        const [entry] = entries;
-        if (entry.isIntersecting) {
-            setIsIntersecting(entry.isIntersecting);
-        }
-    };
-
-    const observer = new IntersectionObserver(onImageInViewPort, {
-        root: null,
-        rootMargin: '0px',
-        threshold: 1,
-    });
-
     createEffect(() => {
         const controller = new AbortController();
         const { signal } = controller;
@@ -63,7 +50,6 @@ const LazyImage: Component<ILazyImage> = ({ src, placeholder, alt, ...props }) =
 
         onCleanup(() => {
             controller.abort();
-            observer.disconnect();
         });
     });
 
@@ -78,7 +64,6 @@ const LazyImage: Component<ILazyImage> = ({ src, placeholder, alt, ...props }) =
                 alt={alt && alt() || ''}
                 ref={(el) => {
                     setRef(el);
-                    observer.observe(el);
                 }}
                 {...props}
             />

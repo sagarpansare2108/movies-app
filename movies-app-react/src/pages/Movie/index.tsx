@@ -1,8 +1,10 @@
 import {
   Suspense,
   lazy,
+  memo,
   startTransition,
   useCallback,
+  useEffect,
   useMemo,
   useState,
   useTransition
@@ -12,9 +14,11 @@ import { classNames } from '../../utils';
 import styles from './style.module.scss';
 import useDocumentTitle from '../../hooks/useDocumentTitle';
 import Loader from '../../components/Loader';
+import useIntersectionObserver from '../../hooks/useIntersectionObserver';
 
 const Reviews = lazy(() => import('../../components/Reviews'));
 const Trailers = lazy(() => import('../../components/Trailers'));
+
 
 export default function MoviePage() {
   const { movie, isLoading } = useMovie();
@@ -84,13 +88,13 @@ export default function MoviePage() {
                 {movie?.overview}
               </p>
             )) || (
-              <div className={styles.movie__content__details__overview_loading}>
-                <p className={'shimmer_effect'}></p>
-                <p className={'shimmer_effect'}></p>
-                <p className={'shimmer_effect'}></p>
-                <p className={'shimmer_effect'}></p>
-              </div>
-            )}
+                <div className={styles.movie__content__details__overview_loading}>
+                  <p className={'shimmer_effect'}></p>
+                  <p className={'shimmer_effect'}></p>
+                  <p className={'shimmer_effect'}></p>
+                  <p className={'shimmer_effect'}></p>
+                </div>
+              )}
             <div
               className={classNames(
                 styles.movie__content__details__rating,
@@ -112,13 +116,13 @@ export default function MoviePage() {
                   {movie?.release_date}
                 </p>
               )) || (
-                <p
-                  className={classNames(
-                    styles.movie__content__details__row__date_loading,
-                    'shimmer_effect'
-                  )}
-                ></p>
-              )}
+                  <p
+                    className={classNames(
+                      styles.movie__content__details__row__date_loading,
+                      'shimmer_effect'
+                    )}
+                  ></p>
+                )}
             </div>
             <div className={styles.movie__content__details__row}>
               <p className={styles.movie__content__details__row__label}>
@@ -130,13 +134,13 @@ export default function MoviePage() {
                   {movie?.runtime}
                 </p>
               )) || (
-                <p
-                  className={classNames(
-                    styles.movie__content__details__row__runtime_loading,
-                    'shimmer_effect'
-                  )}
-                ></p>
-              )}
+                  <p
+                    className={classNames(
+                      styles.movie__content__details__row__runtime_loading,
+                      'shimmer_effect'
+                    )}
+                  ></p>
+                )}
             </div>
             <div className={styles.movie__content__details__row}>
               <p className={styles.movie__content__details__row__label}>
@@ -147,13 +151,13 @@ export default function MoviePage() {
                   {movie?.genres.map((genre) => genre.name).join(', ')}
                 </p>
               )) || (
-                <p
-                  className={classNames(
-                    styles.movie__content__details__row__genres_loading,
-                    'shimmer_effect'
-                  )}
-                ></p>
-              )}
+                  <p
+                    className={classNames(
+                      styles.movie__content__details__row__genres_loading,
+                      'shimmer_effect'
+                    )}
+                  ></p>
+                )}
             </div>
           </div>
         </div>
@@ -163,7 +167,7 @@ export default function MoviePage() {
   );
 }
 
-const MovieMoreTabs: React.FC = () => {
+const MovieMoreTabs: React.FC = memo(() => {
   const {
     selectedTab,
     setSelectedTab,
@@ -173,6 +177,11 @@ const MovieMoreTabs: React.FC = () => {
     isTrailersLoading
   } = useMovie();
   const [isPending, startTransition] = useTransition();
+  const { isIntersecting, ref } = useIntersectionObserver<HTMLDivElement>({
+    root: null,
+    rootMargin: '0px',
+    threshold: 0.3,
+  });
 
   const tabs: Array<{ id: string; title: string }> = useMemo(
     () => [
@@ -188,6 +197,12 @@ const MovieMoreTabs: React.FC = () => {
     []
   );
 
+  useEffect(() => {
+    isIntersecting && startTransition(() => {
+      setSelectedTab('reviews');
+    });
+  }, [isIntersecting]);
+
   const onSelectTab = useCallback(
     (tabId: string) => {
       startTransition(() => {
@@ -198,8 +213,8 @@ const MovieMoreTabs: React.FC = () => {
   );
 
   return (
-    <div className={styles.movie__content__more_info}>
-      <div className={classNames('tabs', styles.movie__content__tabs)}>
+    <div className={styles.movie_more_tabs} ref={ref}>
+      <div className={classNames('tabs', styles.movie_more_tabs__nav)}>
         {tabs.map((tab) => (
           <a
             key={tab.id}
@@ -217,7 +232,7 @@ const MovieMoreTabs: React.FC = () => {
           </a>
         ))}
       </div>
-      <div className={styles.movie__content__tab_body}>
+      <div className={styles.movie_more_tabs__body}>
         {selectedTab === 'reviews' && (
           <Suspense fallback={<Loader />}>
             {(!isReviewsLoading && (
@@ -235,4 +250,4 @@ const MovieMoreTabs: React.FC = () => {
       </div>
     </div>
   );
-};
+});

@@ -116,7 +116,7 @@ export function MovieProvider({ children }: { children: ReactNode }): any {
 
   const [state, dispatch] = useReducer(movieReducer, initialState);
 
-  const [selectedTab, setSelectedTab] = useState('reviews');
+  const [selectedTab, setSelectedTab] = useState('');
 
   useEffect(() => {
     const controller = new AbortController();

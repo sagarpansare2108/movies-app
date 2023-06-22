@@ -1,7 +1,8 @@
-import { ImgHTMLAttributes, startTransition, useCallback, useEffect, useRef, useState } from 'react';
+import { ImgHTMLAttributes, startTransition, useCallback, useEffect, useState } from 'react';
 import styles from './style.module.scss';
 import { classNames } from '../../utils';
 import CacheService from "../../services/CacheService";
+import useIntersectionObserver from '../../hooks/useIntersectionObserver';
 
 interface ILazyImage extends Omit<ImgHTMLAttributes<HTMLImageElement>, 'src'> {
     src: string;
@@ -12,32 +13,7 @@ const IMAGE_CACHE = 'IMAGE_CACHE';
 
 const LazyImage: React.FC<ILazyImage> = ({ src, placeholder, ...rest }) => {
     const [isLoaded, setLoaded] = useState<boolean>(false);
-    const ref = useRef<HTMLImageElement | null>(null);
-    const [isIntersecting, setIsIntersecting] = useState(false);
-
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-            (entries: IntersectionObserverEntry[]) => {
-                const [entry] = entries;
-                if (entry.isIntersecting) {
-                    setIsIntersecting(true);
-                }
-            },
-            {
-                root: null,
-                rootMargin: '0px',
-                threshold: 1,
-            }
-        );
-
-        if (ref.current) {
-            observer.observe(ref.current);
-        }
-
-        return () => {
-            observer.disconnect();
-        };
-    }, [ref.current]);
+    const { isIntersecting, ref } = useIntersectionObserver<HTMLImageElement>();
 
     useEffect(() => {
         const controller = new AbortController();
