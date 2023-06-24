@@ -1,17 +1,41 @@
-import { component$, Slot } from '@builder.io/qwik';
-import type { RequestHandler } from '@builder.io/qwik-city';
+import { component$, noSerialize, Slot, useStylesScoped$ } from '@builder.io/qwik';
+import { routeLoader$ } from '@builder.io/qwik-city';
+// import { useLocation } from '@builder.io/qwik-city';
+import Header from '~/components/header';
+import { MoviesProvider } from '~/contexts/MoviesContext';
+import MoviesService from '~/services/movies_service';
 
-export const onGet: RequestHandler = async ({ cacheControl }) => {
-  // Control caching for this request for best performance and to reduce hosting costs:
-  // https://qwik.builder.io/docs/caching/
-  cacheControl({
-    // Always serve a cached response by default, up to a week stale
-    staleWhileRevalidate: 60 * 60 * 24 * 7,
-    // Max once every 5 seconds, revalidate on the server to get a fresh version of this page
-    maxAge: 5,
-  });
-};
+export const useMoviesRouteLoader = routeLoader$(async (request) => {
+  const requestCategory = (request.params && request.params.category) || '';
+  const category =
+    (requestCategory !== '' && `/${requestCategory}`) || '/popular';
+  try {
+    const response = await MoviesService.getMovies({
+      category: category,
+      page: 1
+    });
+    return noSerialize(response);
+  } catch (e) {
+    // console.log(e);
+  }
+});
 
 export default component$(() => {
-  return <Slot />;
+  useStylesScoped$(`
+    .main {
+      padding-top: 100px;
+    }
+  `);
+  const data = useMoviesRouteLoader();
+  return (
+    <>
+      <MoviesProvider data={data.value}>
+        <Header />
+        <main class='main'>
+          {/* {loc.isNavigating && 'Loading....'} */}
+          <Slot />
+        </main>
+      </MoviesProvider>
+    </>
+  );
 });

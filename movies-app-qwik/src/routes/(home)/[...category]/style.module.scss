@@ -1,0 +1,20 @@
+.list {
+    margin-top: 25px;
+    padding-bottom: 50px;
+}
+
+.load_more {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 50px;
+
+    button {
+        width: 150px;
+
+        &:disabled {
+            color: rgba(0, 0, 0, 0.5);
+            opacity: 1;
+        }
+    }
+}
